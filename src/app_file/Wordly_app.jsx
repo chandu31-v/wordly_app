@@ -5,10 +5,11 @@ function App() {
     const [enteredInput, setInput] = useState("")
     const [expectedAnswer, setExpectedAnswer] = useState("")
     const [colorCodingData, setColorCodingData] = useState([])
+    const [match, setMatch] = useState(false)
     let number = useRef(0)
 
     //create array to use map
-    const objArray = Array.from({"length":4},(_,i)=>i)
+    const objArray = Array.from({ "length": 4 }, (_, i) => i)
 
     //access answer expected
     useEffect(() => {
@@ -20,7 +21,7 @@ function App() {
     console.log(expectedAnswer)
 
     //handle the submit of answer
-    const inputHandler = () => {
+    const submitHandler = () => {
         number.current += 1
         let str = ""
         for (let i = 0; i < 5; i++) {
@@ -34,13 +35,16 @@ function App() {
                 str += "3"
             }
         }
+        if (expectedAnswer.toUpperCase() === enteredInput.toUpperCase())
+            setMatch(true)
+
         setColorCodingData([...colorCodingData, { "letter": enteredInput.toUpperCase(), "color": str }])
         setInput("")
         //console.log(number.current)
     }
 
     //create UI blocks to display each letter
-    function comp(i) {
+    /*function comp(i) {
         let str = []
         for (let j = 0; j < 5; j++) {
             str.push(
@@ -50,10 +54,10 @@ function App() {
         }
         return <div>{str}</div>
 
-    }
+    }*/
 
     return (<>
-        <div className="flex flex-col w-screen h-screen items-center ml-4 mt-4">
+        <div className={`flex flex-col w-screen h-screen items-center pl-4 pt-4`} >
             <div>
                 <div>
                     {/*<div className="row1">
@@ -70,7 +74,7 @@ function App() {
                                 str.push(
                                     <input type="text"
                                         value={colorCodingData[i] ? colorCodingData[i]["letter"][j] : ""}
-                                        className={`flex text-center border-2 border-bold rounded-lg w-12 h-12 text-3xl ${(colorCodingData[i] && colorCodingData[i]["color"][j] === "1") ? 'bg-green-600 text-white' : (colorCodingData[i] && colorCodingData[i]["color"][j] === "2") ? "bg-yellow-600 text-white" : "bg-red-600 text-white"}`} />)
+                                        className={`flex text-center border-2 border-bold rounded-lg w-12 h-12 text-3xl ${(colorCodingData[i] && colorCodingData[i]["color"][j] === "1") ? 'bg-green-600 text-white' : (colorCodingData[i] && colorCodingData[i]["color"][j] === "2") ? "bg-yellow-600 text-white" : colorCodingData[i] ? "bg-red-600 text-white" : "bg-white"}`} />)
                             }
                             return <div className="flex flex-row">{str}</div>
                         })
@@ -81,10 +85,18 @@ function App() {
             </div>
             <div className="input_data">
                 <input type="text" value={enteredInput} onChange={(e) => { setInput(e.target.value) }} className="border-2 border-bold rounded-lg h-12 w-42 mr-1" minLength={5} maxLength={5} disabled={number.curret >= 4} />
-                <input type="submit" onClick={inputHandler} className="border-2 rounded w-14 py-2" disabled={number.current >= 4 || enteredInput.length < 1} />
+                <input type="submit"
+                    onClick={submitHandler}
+                    className={`border-2 rounded-lg w-14 py-2 + ${(number.current >= 4 || enteredInput.length < 1 || match) ? "bg-slate-100" : ""}`}
+                    disabled={number.current >= 4 || enteredInput.length < 1 || match} />
             </div>
 
+            {/**Display when entered guess is correct */}
+            <div className={`bg-green-400 p-2 mt-2 ${match ? "block" : "hidden"}`}>
+                <label >Correct Answer</label>
+            </div>
         </div>
+
     </>)
 }
 
